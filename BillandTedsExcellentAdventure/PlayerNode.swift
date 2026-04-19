@@ -134,6 +134,11 @@ class PlayerNode: SKSpriteNode {
             body.velocity.dx = 0
         }
 
+        // Clamp tiny vertical velocities while grounded to stop physics jitter
+        if isOnGround && abs(body.velocity.dy) < 8 {
+            body.velocity.dy = 0
+        }
+
         // Landing squash (only on air -> ground transition)
         if isOnGround && !wasOnGround && jumpCount == 0, action(forKey: "landAnim") == nil {
             let sign: CGFloat = xScale < 0 ? -1 : 1

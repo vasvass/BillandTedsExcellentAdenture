@@ -91,19 +91,11 @@ class MenuScene: SKScene {
         bg.name = type.rawValue + "_bg"
         root.addChild(bg)
 
-        // Avatar
-        let avatar = SKShapeNode(rectOf: CGSize(width: 64, height: 96), cornerRadius: 10)
-        avatar.fillColor = type.color
-        avatar.strokeColor = .clear
+        // Avatar — drawn character portrait
+        let avatar = SKSpriteNode(texture: SpriteFactory.playerTexture(for: type))
+        avatar.size = CGSize(width: 56, height: 84)
         avatar.position = CGPoint(x: 0, y: 45)
         root.addChild(avatar)
-
-        let initial = SKLabelNode(text: type == .bill ? "B" : "T")
-        initial.fontName = "AvenirNext-Bold"
-        initial.fontSize = 46
-        initial.fontColor = .white
-        initial.verticalAlignmentMode = .center
-        avatar.addChild(initial)
 
         // Name
         let nameLabel = label(type == .bill ? "BILL" : "TED", size: 22, color: type.color, bold: true)

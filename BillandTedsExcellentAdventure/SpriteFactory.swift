@@ -79,6 +79,42 @@ enum SpriteFactory {
         return SKTexture(image: img)
     }
 
+    static func teacherTexture() -> SKTexture {
+        let size = CGSize(width: 72, height: 110)
+        let img = UIGraphicsImageRenderer(size: size).image { ctx in
+            drawTeacher(in: CGRect(origin: .zero, size: size), ctx: ctx.cgContext)
+        }
+        return SKTexture(image: img)
+    }
+
+    static func lockerBankTexture(size: CGSize) -> SKTexture {
+        let img = UIGraphicsImageRenderer(size: size).image { ctx in
+            drawLockerBank(in: CGRect(origin: .zero, size: size), ctx: ctx.cgContext)
+        }
+        return SKTexture(image: img)
+    }
+
+    static func schoolFloorTexture(size: CGSize) -> SKTexture {
+        let img = UIGraphicsImageRenderer(size: size).image { ctx in
+            drawSchoolFloor(in: CGRect(origin: .zero, size: size), ctx: ctx.cgContext)
+        }
+        return SKTexture(image: img)
+    }
+
+    static func chalkboardTexture(size: CGSize) -> SKTexture {
+        let img = UIGraphicsImageRenderer(size: size).image { ctx in
+            drawChalkboard(in: CGRect(origin: .zero, size: size), ctx: ctx.cgContext)
+        }
+        return SKTexture(image: img)
+    }
+
+    static func schoolExteriorTexture(size: CGSize) -> SKTexture {
+        let img = UIGraphicsImageRenderer(size: size).image { ctx in
+            drawSchoolExterior(in: CGRect(origin: .zero, size: size), ctx: ctx.cgContext)
+        }
+        return SKTexture(image: img)
+    }
+
     // MARK: - Bill
 
     private static func drawBill(in r: CGRect, ctx: CGContext) {
@@ -828,5 +864,325 @@ enum SpriteFactory {
         ctx.setFillColor(glowW)
         ctx.fill(CGRect(x: w*0.16, y: h*0.10, width: w*0.68, height: h*0.03))
         ctx.fill(CGRect(x: w*0.16, y: h*0.15, width: w*0.68, height: h*0.03))
+    }
+
+    // MARK: - Teacher (Mr. Ryan)
+
+    private static func drawTeacher(in r: CGRect, ctx: CGContext) {
+        let w = r.width, h = r.height
+        let skin    = UIColor(red: 0.90, green: 0.76, blue: 0.60, alpha: 1).cgColor
+        let suit    = UIColor(red: 0.32, green: 0.28, blue: 0.22, alpha: 1).cgColor
+        let shirtW  = UIColor(red: 0.94, green: 0.93, blue: 0.90, alpha: 1).cgColor
+        let tie     = UIColor(red: 0.60, green: 0.14, blue: 0.14, alpha: 1).cgColor
+        let hair    = UIColor(red: 0.40, green: 0.32, blue: 0.22, alpha: 1).cgColor
+        let shoe    = UIColor(red: 0.14, green: 0.10, blue: 0.08, alpha: 1).cgColor
+        let paper   = UIColor(red: 0.97, green: 0.96, blue: 0.88, alpha: 1).cgColor
+
+        // Shoes
+        ctx.setFillColor(shoe)
+        ctx.fill(CGRect(x: w*0.10, y: h*0.90, width: w*0.30, height: h*0.10))
+        ctx.fill(CGRect(x: w*0.60, y: h*0.90, width: w*0.30, height: h*0.10))
+
+        // Trousers (dark grey)
+        ctx.setFillColor(UIColor(red: 0.28, green: 0.26, blue: 0.24, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: w*0.16, y: h*0.52, width: w*0.27, height: h*0.40))
+        ctx.fill(CGRect(x: w*0.57, y: h*0.52, width: w*0.27, height: h*0.40))
+
+        // Suit jacket body
+        ctx.setFillColor(suit)
+        ctx.fill(CGRect(x: w*0.13, y: h*0.27, width: w*0.74, height: h*0.28))
+
+        // White shirt / lapels
+        ctx.setFillColor(shirtW)
+        let lapelL = CGMutablePath()
+        lapelL.move(to: CGPoint(x: w*0.35, y: h*0.27))
+        lapelL.addLine(to: CGPoint(x: w*0.50, y: h*0.44))
+        lapelL.addLine(to: CGPoint(x: w*0.50, y: h*0.27))
+        lapelL.closeSubpath()
+        ctx.addPath(lapelL); ctx.fillPath()
+        let lapelR = CGMutablePath()
+        lapelR.move(to: CGPoint(x: w*0.65, y: h*0.27))
+        lapelR.addLine(to: CGPoint(x: w*0.50, y: h*0.44))
+        lapelR.addLine(to: CGPoint(x: w*0.50, y: h*0.27))
+        lapelR.closeSubpath()
+        ctx.addPath(lapelR); ctx.fillPath()
+
+        // Tie
+        ctx.setFillColor(tie)
+        let tiePath = CGMutablePath()
+        tiePath.move(to: CGPoint(x: w*0.44, y: h*0.27))
+        tiePath.addLine(to: CGPoint(x: w*0.56, y: h*0.27))
+        tiePath.addLine(to: CGPoint(x: w*0.54, y: h*0.50))
+        tiePath.addLine(to: CGPoint(x: w*0.50, y: h*0.56))
+        tiePath.addLine(to: CGPoint(x: w*0.46, y: h*0.50))
+        tiePath.closeSubpath()
+        ctx.addPath(tiePath); ctx.fillPath()
+        // Tie knot
+        ctx.setFillColor(UIColor(red: 0.45, green: 0.08, blue: 0.08, alpha: 1).cgColor)
+        ctx.fillEllipse(in: CGRect(x: w*0.44, y: h*0.25, width: w*0.12, height: h*0.05))
+
+        // Left arm holding papers
+        ctx.setFillColor(suit)
+        ctx.fill(CGRect(x: w*0.00, y: h*0.28, width: w*0.15, height: h*0.25))
+        // Papers in hand
+        ctx.setFillColor(paper)
+        ctx.fill(CGRect(x: w*0.00, y: h*0.38, width: w*0.20, height: h*0.18))
+        ctx.setFillColor(UIColor(red: 0.60, green: 0.58, blue: 0.54, alpha: 0.5).cgColor)
+        for i in 0..<4 {
+            ctx.fill(CGRect(x: w*0.02, y: h*(0.40 + Double(i)*0.038), width: w*0.16, height: h*0.015))
+        }
+        // Right arm raised (pointing at board)
+        ctx.setFillColor(suit)
+        ctx.fill(CGRect(x: w*0.82, y: h*0.20, width: w*0.15, height: h*0.22))
+        ctx.setFillColor(skin)
+        ctx.fillEllipse(in: CGRect(x: w*0.82, y: h*0.18, width: w*0.15, height: h*0.08))
+
+        // Neck
+        ctx.setFillColor(skin)
+        ctx.fill(CGRect(x: w*0.40, y: h*0.16, width: w*0.20, height: h*0.13))
+
+        // Head
+        ctx.fillEllipse(in: CGRect(x: w*0.20, y: h*0.02, width: w*0.60, height: h*0.22))
+
+        // Thinning brown hair on top
+        ctx.setFillColor(hair)
+        let hairPath = CGMutablePath()
+        hairPath.move(to: CGPoint(x: w*0.20, y: h*0.11))
+        hairPath.addCurve(to: CGPoint(x: w*0.80, y: h*0.11),
+                          control1: CGPoint(x: w*0.24, y: h*(-0.01)),
+                          control2: CGPoint(x: w*0.76, y: h*(-0.01)))
+        hairPath.addLine(to: CGPoint(x: w*0.80, y: h*0.07))
+        hairPath.addCurve(to: CGPoint(x: w*0.20, y: h*0.07),
+                          control1: CGPoint(x: w*0.72, y: h*(-0.02)),
+                          control2: CGPoint(x: w*0.28, y: h*(-0.02)))
+        hairPath.closeSubpath()
+        ctx.addPath(hairPath); ctx.fillPath()
+        // Side patches only (balding on top)
+        ctx.fill(CGRect(x: w*0.18, y: h*0.08, width: w*0.14, height: h*0.12))
+        ctx.fill(CGRect(x: w*0.68, y: h*0.08, width: w*0.14, height: h*0.12))
+
+        // Glasses frames
+        ctx.setStrokeColor(UIColor(red: 0.22, green: 0.16, blue: 0.08, alpha: 1).cgColor)
+        ctx.setLineWidth(2.0)
+        ctx.stroke(CGRect(x: w*0.24, y: h*0.09, width: w*0.18, height: h*0.072).insetBy(dx: 0, dy: 0))
+        ctx.stroke(CGRect(x: w*0.58, y: h*0.09, width: w*0.18, height: h*0.072).insetBy(dx: 0, dy: 0))
+        // Bridge
+        ctx.move(to: CGPoint(x: w*0.42, y: h*0.120)); ctx.addLine(to: CGPoint(x: w*0.58, y: h*0.120)); ctx.strokePath()
+
+        // Eyes behind glasses
+        ctx.setFillColor(UIColor(red: 0.25, green: 0.18, blue: 0.08, alpha: 1).cgColor)
+        ctx.fillEllipse(in: CGRect(x: w*0.29, y: h*0.100, width: w*0.08, height: h*0.048))
+        ctx.fillEllipse(in: CGRect(x: w*0.63, y: h*0.100, width: w*0.08, height: h*0.048))
+
+        // Stern eyebrows
+        ctx.setStrokeColor(hair)
+        ctx.setLineWidth(2.0)
+        ctx.move(to: CGPoint(x: w*0.23, y: h*0.088)); ctx.addLine(to: CGPoint(x: w*0.42, y: h*0.082)); ctx.strokePath()
+        ctx.move(to: CGPoint(x: w*0.58, y: h*0.082)); ctx.addLine(to: CGPoint(x: w*0.77, y: h*0.088)); ctx.strokePath()
+
+        // Mouth (thin, slightly displeased)
+        ctx.setStrokeColor(UIColor(red: 0.50, green: 0.28, blue: 0.16, alpha: 1).cgColor)
+        ctx.setLineWidth(1.5)
+        ctx.move(to: CGPoint(x: w*0.36, y: h*0.185)); ctx.addLine(to: CGPoint(x: w*0.64, y: h*0.185)); ctx.strokePath()
+    }
+
+    // MARK: - Locker Bank
+
+    private static func drawLockerBank(in r: CGRect, ctx: CGContext) {
+        let w = r.width, h = r.height
+        let lockerW = w / 5
+        let colors: [CGColor] = [
+            UIColor(red: 0.72, green: 0.14, blue: 0.14, alpha: 1).cgColor,
+            UIColor(red: 0.14, green: 0.30, blue: 0.68, alpha: 1).cgColor,
+            UIColor(red: 0.18, green: 0.50, blue: 0.22, alpha: 1).cgColor,
+            UIColor(red: 0.60, green: 0.55, blue: 0.14, alpha: 1).cgColor,
+            UIColor(red: 0.50, green: 0.18, blue: 0.50, alpha: 1).cgColor
+        ]
+        for i in 0..<5 {
+            let lx = CGFloat(i) * lockerW
+            // Body
+            ctx.setFillColor(colors[i % colors.count])
+            ctx.fill(CGRect(x: lx + 1, y: 1, width: lockerW - 2, height: h - 2))
+            // Highlight edge
+            ctx.setFillColor(UIColor.white.withAlphaComponent(0.15).cgColor)
+            ctx.fill(CGRect(x: lx + 1, y: 1, width: 3, height: h - 2))
+            // Shadow edge
+            ctx.setFillColor(UIColor.black.withAlphaComponent(0.20).cgColor)
+            ctx.fill(CGRect(x: lx + lockerW - 4, y: 1, width: 3, height: h - 2))
+            // Vent slats
+            ctx.setFillColor(UIColor.black.withAlphaComponent(0.35).cgColor)
+            for v in 0..<4 {
+                ctx.fill(CGRect(x: lx + lockerW*0.18, y: h*(0.12 + Double(v)*0.06),
+                                width: lockerW*0.64, height: h*0.02))
+            }
+            // Handle
+            ctx.setFillColor(UIColor(red: 0.75, green: 0.72, blue: 0.68, alpha: 1).cgColor)
+            ctx.fillEllipse(in: CGRect(x: lx + lockerW*0.70, y: h*0.42,
+                                       width: lockerW*0.12, height: h*0.08))
+            // Combination lock
+            ctx.setFillColor(UIColor(red: 0.62, green: 0.60, blue: 0.56, alpha: 1).cgColor)
+            ctx.fillEllipse(in: CGRect(x: lx + lockerW*0.36, y: h*0.44,
+                                       width: lockerW*0.26, height: h*0.08))
+        }
+        // Divider lines
+        ctx.setFillColor(UIColor(red: 0.20, green: 0.18, blue: 0.16, alpha: 1).cgColor)
+        for i in 1..<5 {
+            ctx.fill(CGRect(x: CGFloat(i) * lockerW - 1, y: 0, width: 2, height: h))
+        }
+    }
+
+    // MARK: - School Floor
+
+    private static func drawSchoolFloor(in r: CGRect, ctx: CGContext) {
+        let w = r.width, h = r.height
+        let tileSize: CGFloat = 40
+        let light = UIColor(red: 0.90, green: 0.88, blue: 0.84, alpha: 1).cgColor
+        let dark  = UIColor(red: 0.72, green: 0.70, blue: 0.66, alpha: 1).cgColor
+
+        var row = 0
+        var y: CGFloat = 0
+        while y < h {
+            var col = 0
+            var x: CGFloat = 0
+            while x < w {
+                ctx.setFillColor((row + col) % 2 == 0 ? light : dark)
+                ctx.fill(CGRect(x: x, y: y, width: tileSize, height: tileSize))
+                // Grout lines
+                ctx.setFillColor(UIColor(red: 0.55, green: 0.53, blue: 0.50, alpha: 0.5).cgColor)
+                ctx.fill(CGRect(x: x, y: y, width: tileSize, height: 1.5))
+                ctx.fill(CGRect(x: x, y: y, width: 1.5, height: tileSize))
+                x += tileSize; col += 1
+            }
+            y += tileSize; row += 1
+        }
+    }
+
+    // MARK: - Chalkboard
+
+    private static func drawChalkboard(in r: CGRect, ctx: CGContext) {
+        let w = r.width, h = r.height
+
+        // Wooden frame
+        ctx.setFillColor(UIColor(red: 0.55, green: 0.35, blue: 0.15, alpha: 1).cgColor)
+        ctx.fill(r)
+
+        // Green board surface
+        ctx.setFillColor(UIColor(red: 0.12, green: 0.32, blue: 0.18, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: w*0.04, y: h*0.06, width: w*0.92, height: h*0.80))
+
+        // Board texture (subtle lighter patches)
+        ctx.setFillColor(UIColor(red: 0.16, green: 0.36, blue: 0.22, alpha: 0.5).cgColor)
+        ctx.fill(CGRect(x: w*0.10, y: h*0.12, width: w*0.30, height: h*0.25))
+        ctx.fill(CGRect(x: w*0.55, y: h*0.40, width: w*0.35, height: h*0.28))
+
+        // Chalk tray
+        ctx.setFillColor(UIColor(red: 0.42, green: 0.26, blue: 0.10, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: w*0.04, y: h*0.86, width: w*0.92, height: h*0.08))
+        // Chalk pieces in tray
+        let chalkColors: [CGColor] = [UIColor.white.cgColor,
+                                       UIColor(red: 0.95, green: 0.85, blue: 0.50, alpha: 1).cgColor,
+                                       UIColor(red: 0.80, green: 0.90, blue: 0.98, alpha: 1).cgColor]
+        for (ci, cx) in [0.12, 0.22, 0.50].enumerated() {
+            ctx.setFillColor(chalkColors[ci])
+            ctx.fill(CGRect(x: w*cx, y: h*0.875, width: w*0.08, height: h*0.045))
+        }
+
+        // Written text — "HISTORY REPORT"
+        ctx.setFillColor(UIColor.white.withAlphaComponent(0.88).cgColor)
+        // Simulate underline title
+        ctx.fill(CGRect(x: w*0.08, y: h*0.17, width: w*0.84, height: h*0.025))
+        // Text lines (chalk scribble effect — horizontal bars of varying opacity)
+        let lineY: [CGFloat] = [0.28, 0.38, 0.48, 0.58, 0.68]
+        for ly in lineY {
+            ctx.setFillColor(UIColor.white.withAlphaComponent(CGFloat.random(in: 0.55...0.80)).cgColor)
+            ctx.fill(CGRect(x: w*0.08, y: h*ly, width: w*CGFloat.random(in: 0.50...0.80), height: h*0.018))
+        }
+        // "DUE FRIDAY" underline — red chalk
+        ctx.setFillColor(UIColor(red: 0.95, green: 0.25, blue: 0.20, alpha: 0.90).cgColor)
+        ctx.fill(CGRect(x: w*0.08, y: h*0.750, width: w*0.55, height: h*0.022))
+    }
+
+    // MARK: - School Exterior
+
+    private static func drawSchoolExterior(in r: CGRect, ctx: CGContext) {
+        let w = r.width, h = r.height
+
+        // Sky
+        ctx.setFillColor(UIColor(red: 0.65, green: 0.82, blue: 0.96, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: 0, y: 0, width: w, height: h * 0.55))
+
+        // Grass strip
+        ctx.setFillColor(UIColor(red: 0.32, green: 0.60, blue: 0.24, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: 0, y: h*0.55, width: w, height: h * 0.10))
+
+        // School building — brick red facade
+        ctx.setFillColor(UIColor(red: 0.65, green: 0.28, blue: 0.22, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: 0, y: h*0.10, width: w, height: h * 0.50))
+
+        // Brick rows
+        ctx.setStrokeColor(UIColor(red: 0.42, green: 0.18, blue: 0.14, alpha: 0.5).cgColor)
+        ctx.setLineWidth(1.0)
+        var by: CGFloat = h * 0.12
+        while by < h * 0.58 {
+            ctx.move(to: CGPoint(x: 0, y: by)); ctx.addLine(to: CGPoint(x: w, y: by)); ctx.strokePath()
+            by += h * 0.04
+        }
+        // Vertical brick joints (offset per row)
+        let brickW: CGFloat = w / 6
+        for row in 0..<12 {
+            let offset: CGFloat = row % 2 == 0 ? 0 : brickW / 2
+            var bx = offset
+            while bx < w {
+                let rowY = h * 0.12 + CGFloat(row) * h * 0.04
+                ctx.move(to: CGPoint(x: bx, y: rowY)); ctx.addLine(to: CGPoint(x: bx, y: rowY + h*0.04)); ctx.strokePath()
+                bx += brickW
+            }
+        }
+
+        // Windows (3)
+        let winY: CGFloat = h * 0.18
+        let winH: CGFloat = h * 0.20
+        let winW: CGFloat = w * 0.18
+        for i in 0..<3 {
+            let wx = w * (0.12 + Double(i) * 0.30)
+            // Frame
+            ctx.setFillColor(UIColor(red: 0.80, green: 0.72, blue: 0.56, alpha: 1).cgColor)
+            ctx.fill(CGRect(x: wx - 3, y: winY - 3, width: winW + 6, height: winH + 6))
+            // Glass (light blue)
+            ctx.setFillColor(UIColor(red: 0.72, green: 0.88, blue: 0.96, alpha: 0.75).cgColor)
+            ctx.fill(CGRect(x: wx, y: winY, width: winW, height: winH))
+            // Cross divider
+            ctx.setFillColor(UIColor(red: 0.80, green: 0.72, blue: 0.56, alpha: 1).cgColor)
+            ctx.fill(CGRect(x: wx + winW/2 - 1.5, y: winY, width: 3, height: winH))
+            ctx.fill(CGRect(x: wx, y: winY + winH/2 - 1.5, width: winW, height: 3))
+        }
+
+        // Sign banner above entrance
+        ctx.setFillColor(UIColor(red: 0.14, green: 0.18, blue: 0.48, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: w*0.25, y: h*0.06, width: w*0.50, height: h*0.07))
+        ctx.setFillColor(UIColor.white.withAlphaComponent(0.90).cgColor)
+        // "SAN DIMAS HIGH" as white stripes
+        ctx.fill(CGRect(x: w*0.28, y: h*0.075, width: w*0.44, height: h*0.018))
+        ctx.fill(CGRect(x: w*0.30, y: h*0.098, width: w*0.40, height: h*0.018))
+
+        // Entrance doors (double doors)
+        ctx.setFillColor(UIColor(red: 0.32, green: 0.28, blue: 0.22, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: w*0.38, y: h*0.38, width: w*0.24, height: h*0.27))
+        ctx.setFillColor(UIColor(red: 0.72, green: 0.88, blue: 0.96, alpha: 0.55).cgColor)
+        ctx.fill(CGRect(x: w*0.39, y: h*0.39, width: w*0.10, height: h*0.26))
+        ctx.fill(CGRect(x: w*0.51, y: h*0.39, width: w*0.10, height: h*0.26))
+        // Door handles
+        ctx.setFillColor(UIColor(red: 0.75, green: 0.70, blue: 0.25, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: w*0.482, y: h*0.505, width: w*0.018, height: h*0.04))
+        ctx.fill(CGRect(x: w*0.500, y: h*0.505, width: w*0.018, height: h*0.04))
+
+        // Sidewalk
+        ctx.setFillColor(UIColor(red: 0.76, green: 0.74, blue: 0.70, alpha: 1).cgColor)
+        ctx.fill(CGRect(x: 0, y: h*0.62, width: w, height: h * 0.38))
+        // Sidewalk cracks
+        ctx.setStrokeColor(UIColor(red: 0.58, green: 0.56, blue: 0.52, alpha: 0.5).cgColor)
+        ctx.setLineWidth(1)
+        ctx.move(to: CGPoint(x: w*0.3, y: h*0.65)); ctx.addLine(to: CGPoint(x: w*0.35, y: h*0.85)); ctx.strokePath()
+        ctx.move(to: CGPoint(x: w*0.7, y: h*0.70)); ctx.addLine(to: CGPoint(x: w*0.66, y: h*0.90)); ctx.strokePath()
     }
 }

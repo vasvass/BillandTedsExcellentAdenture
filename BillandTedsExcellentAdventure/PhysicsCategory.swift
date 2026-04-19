@@ -8,4 +8,5 @@ struct PhysicsCategory {
     static let enemy:       UInt32 = 0x1 << 2
     static let collectible: UInt32 = 0x1 << 3
     static let phoneBooth:  UInt32 = 0x1 << 4
+    static let trigger:     UInt32 = 0x1 << 5   // invisible zone contacts
 }

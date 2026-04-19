@@ -193,7 +193,7 @@ class MenuScene: SKScene {
     // MARK: - Transition
 
     private func startGame() {
-        let scene = GameScene(size: size, character: selectedCharacter)
+        let scene = SanDimasScene(size: size, character: selectedCharacter)
         scene.scaleMode = .aspectFill
         view?.presentScene(scene, transition: .fade(withDuration: 1.0))
     }

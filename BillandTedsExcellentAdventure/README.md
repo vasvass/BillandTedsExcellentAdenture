@@ -100,19 +100,8 @@ BillandTedsExcellentAdventure/
 │   ├── HUDScene.swift           — Heads-up display overlay
 │   └── TransitionScene.swift    — Phone booth time travel transitions
 ├── Entities/
-│   ├── PlayerEntity.swift       — Shared player base
-│   ├── BillEntity.swift         — Bill-specific stats & abilities
-│   ├── TedEntity.swift          — Ted-specific stats & abilities
-│   ├── HistoricalFigure.swift   — NPC collectible entities
-│   └── EnemyEntity.swift        — Era-specific enemies
-├── Components/
-│   ├── MovementComponent.swift
-│   ├── PhysicsComponent.swift
-│   ├── AnimationComponent.swift
-│   └── AbilityComponent.swift
-├── Levels/
-│   ├── LevelLoader.swift        — Loads .sks level files
-│   └── *.sks                    — One scene file per era
+├── *.swift                      — App and gameplay source files currently live at the project root
+├── GameScene.sks                — Existing SpriteKit scene file
 ├── Audio/
 │   ├── AudioManager.swift
 │   └── *.mp3 / *.wav            — Music & SFX assets

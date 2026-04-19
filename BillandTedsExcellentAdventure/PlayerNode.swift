@@ -8,6 +8,7 @@ class PlayerNode: SKSpriteNode {
     let characterType: CharacterType
 
     var isOnGround = false
+    private var wasOnGround = true
     var jumpCount   = 0
     let maxJumps    = 2
 
@@ -133,17 +134,16 @@ class PlayerNode: SKSpriteNode {
             body.velocity.dx = 0
         }
 
-        // Landing squash
-        if isOnGround && jumpCount == 0 {
-            // settled — ensure normal scale
-            if action(forKey: "landAnim") == nil && (xScale == 1 || xScale == -1) {
-                let sign: CGFloat = xScale < 0 ? -1 : 1
-                let squash = SKAction.sequence([
-                    .scaleX(to: 1.15 * sign, y: 0.85, duration: 0.06),
-                    .scaleX(to: 1.00 * sign, y: 1.00, duration: 0.06)
-                ])
-                run(squash, withKey: "landAnim")
-            }
+        // Landing squash (only on air -> ground transition)
+        if isOnGround && !wasOnGround && jumpCount == 0, action(forKey: "landAnim") == nil {
+            let sign: CGFloat = xScale < 0 ? -1 : 1
+            let squash = SKAction.sequence([
+                .scaleX(to: 1.15 * sign, y: 0.85, duration: 0.06),
+                .scaleX(to: 1.00 * sign, y: 1.00, duration: 0.06)
+            ])
+            run(squash, withKey: "landAnim")
         }
+
+        wasOnGround = isOnGround
     }
 }

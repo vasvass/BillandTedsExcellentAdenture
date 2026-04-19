@@ -422,12 +422,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
 
             case ("jumpButton", .began):
-                player.jump()
                 flashButton(jumpButton)
 
                 // Repurpose jump button near booth as switch action
-                if nearPhoneBooth && !socratesCollected {
+                if nearPhoneBooth {
                     switchCharacter()
+                } else {
+                    player.jump()
                 }
 
             case ("abilityButton", .began):

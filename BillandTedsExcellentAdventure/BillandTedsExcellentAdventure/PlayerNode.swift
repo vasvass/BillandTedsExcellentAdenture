@@ -58,9 +58,11 @@ class PlayerNode: SKSpriteNode {
     // MARK: - Actions
 
     func jump() {
-        guard jumpCount < maxJumps else { return }
-        physicsBody?.velocity.dy = 0
-        physicsBody?.applyImpulse(CGVector(dx: 0, dy: characterType.jumpImpulse))
+        guard jumpCount < maxJumps, let body = physicsBody else { return }
+        var velocity = body.velocity
+        velocity.dy = 0
+        body.velocity = velocity
+        body.applyImpulse(CGVector(dx: 0, dy: characterType.jumpImpulse))
         jumpCount += 1
         isOnGround = false
     }

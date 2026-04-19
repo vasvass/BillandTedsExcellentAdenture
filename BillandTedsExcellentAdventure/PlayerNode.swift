@@ -8,7 +8,7 @@ class PlayerNode: SKSpriteNode {
     let characterType: CharacterType
 
     var isOnGround = false
-    private var wasOnGround = true
+    private var wasOnGround = false
     var jumpCount   = 0
     let maxJumps    = 2
 

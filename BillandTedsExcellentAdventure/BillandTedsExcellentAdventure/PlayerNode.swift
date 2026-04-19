@@ -6,6 +6,7 @@ import SpriteKit
 class PlayerNode: SKSpriteNode {
 
     let characterType: CharacterType
+    private let characterLabel: SKLabelNode
 
     var isOnGround = false
     var jumpCount   = 0
@@ -18,6 +19,7 @@ class PlayerNode: SKSpriteNode {
 
     init(characterType: CharacterType) {
         self.characterType = characterType
+        self.characterLabel = SKLabelNode(text: characterType == .bill ? "B" : "T")
         let size = CGSize(width: 40, height: 60)
         super.init(texture: nil, color: characterType.color, size: size)
         setupPhysics()
@@ -46,21 +48,23 @@ class PlayerNode: SKSpriteNode {
     }
 
     private func setupLabel() {
-        let label = SKLabelNode(text: characterType == .bill ? "B" : "T")
-        label.fontName = "AvenirNext-Bold"
-        label.fontSize = 28
-        label.fontColor = .white
-        label.verticalAlignmentMode = .center
-        label.isUserInteractionEnabled = false
-        addChild(label)
+        characterLabel.fontName = "AvenirNext-Bold"
+        characterLabel.fontSize = 28
+        characterLabel.fontColor = .white
+        characterLabel.verticalAlignmentMode = .center
+        characterLabel.isUserInteractionEnabled = false
+        characterLabel.xScale = xScale
+        addChild(characterLabel)
     }
 
     // MARK: - Actions
 
     func jump() {
-        guard jumpCount < maxJumps else { return }
-        physicsBody?.velocity.dy = 0
-        physicsBody?.applyImpulse(CGVector(dx: 0, dy: characterType.jumpImpulse))
+        guard jumpCount < maxJumps, let body = physicsBody else { return }
+        var velocity = body.velocity
+        velocity.dy = 0
+        body.velocity = velocity
+        body.applyImpulse(CGVector(dx: 0, dy: characterType.jumpImpulse))
         jumpCount += 1
         isOnGround = false
     }
@@ -104,9 +108,11 @@ class PlayerNode: SKSpriteNode {
         if isMovingLeft {
             body.velocity.dx = -characterType.moveSpeed
             xScale = -1
+            characterLabel.xScale = -1
         } else if isMovingRight {
             body.velocity.dx = characterType.moveSpeed
             xScale = 1
+            characterLabel.xScale = 1
         } else {
             body.velocity.dx = 0
         }

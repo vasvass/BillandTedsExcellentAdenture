@@ -56,6 +56,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setupCamera()
         buildLevel()
         setupPlayer()
+        cam.position = CGPoint(
+            x: player.position.x.clamped(to: (size.width / 2)...(levelWidth - size.width / 2)),
+            y: player.position.y.clamped(to: (size.height / 2)...max(size.height / 2, size.height - size.height / 2))
+        )
         setupHUD()
         setupControls()
     }
@@ -66,8 +70,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         cam = SKCameraNode()
         camera = cam
         addChild(cam)
-        // Initialise camera so the player is centred on screen from the start
-        cam.position = CGPoint(x: size.width / 2, y: size.height / 2)
     }
 
     // MARK: - Level
@@ -257,9 +259,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(enemy)
 
         let patrol: CGFloat = 130
+        let patrolDuration: TimeInterval = 1.6
+        let patrolSpeed = patrol / CGFloat(patrolDuration)
         enemy.run(.repeatForever(.sequence([
-            .moveBy(x:  patrol, y: 0, duration: 1.6),
-            .moveBy(x: -patrol, y: 0, duration: 1.6)
+            .run { [weak enemy] in
+                enemy?.physicsBody?.velocity = CGVector(dx: patrolSpeed, dy: enemy?.physicsBody?.velocity.dy ?? 0)
+            },
+            .wait(forDuration: patrolDuration),
+            .run { [weak enemy] in
+                enemy?.physicsBody?.velocity = CGVector(dx: -patrolSpeed, dy: enemy?.physicsBody?.velocity.dy ?? 0)
+            },
+            .wait(forDuration: patrolDuration)
         ])))
     }
 
@@ -422,12 +432,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
 
             case ("jumpButton", .began):
-                player.jump()
                 flashButton(jumpButton)
 
                 // Repurpose jump button near booth as switch action
-                if nearPhoneBooth && !socratesCollected {
+                if nearPhoneBooth {
                     switchCharacter()
+                } else {
+                    player.jump()
                 }
 
             case ("abilityButton", .began):
@@ -448,6 +459,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ]))
     }
 
+    private var supportingGroundBodies = Set<ObjectIdentifier>()
+
     private func resetMovement() {
         leftTouchID  = nil
         rightTouchID = nil
@@ -457,11 +470,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     // MARK: - Physics contacts
 
+    private func playerGroundBodies(for contact: SKPhysicsContact) -> (player: SKPhysicsBody, ground: SKPhysicsBody)? {
+        if contact.bodyA.categoryBitMask == PhysicsCategory.player &&
+           contact.bodyB.categoryBitMask == PhysicsCategory.ground {
+            return (contact.bodyA, contact.bodyB)
+        }
+
+        if contact.bodyA.categoryBitMask == PhysicsCategory.ground &&
+           contact.bodyB.categoryBitMask == PhysicsCategory.player {
+            return (contact.bodyB, contact.bodyA)
+        }
+
+        return nil
+    }
+
+    private func isSupportingGroundContact(_ contact: SKPhysicsContact) -> Bool {
+        guard let groundBodies = playerGroundBodies(for: contact) else { return false }
+
+        if groundBodies.player == contact.bodyA {
+            return contact.contactNormal.dy < -0.5
+        } else {
+            return contact.contactNormal.dy > 0.5
+        }
+    }
+
     func didBegin(_ contact: SKPhysicsContact) {
         let masks = (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask)
 
-        if masks == (PhysicsCategory.player, PhysicsCategory.ground) ||
-           masks == (PhysicsCategory.ground,  PhysicsCategory.player) {
+        if let groundBodies = playerGroundBodies(for: contact),
+           isSupportingGroundContact(contact) {
+            supportingGroundBodies.insert(ObjectIdentifier(groundBodies.ground))
             player.isOnGround = true
             player.jumpCount  = 0
         }
@@ -483,9 +521,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didEnd(_ contact: SKPhysicsContact) {
         let masks = (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask)
 
-        if masks == (PhysicsCategory.player, PhysicsCategory.ground) ||
-           masks == (PhysicsCategory.ground,  PhysicsCategory.player) {
-            player.isOnGround = false
+        if let groundBodies = playerGroundBodies(for: contact) {
+            supportingGroundBodies.remove(ObjectIdentifier(groundBodies.ground))
+            player.isOnGround = !supportingGroundBodies.isEmpty
         }
 
         if masks == (PhysicsCategory.player, PhysicsCategory.phoneBooth) ||

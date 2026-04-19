@@ -1,2 +1,2 @@
-# BillandTedsExcellentAdenture
+# BillandTedsExcellentAdventure
 An ios platform game

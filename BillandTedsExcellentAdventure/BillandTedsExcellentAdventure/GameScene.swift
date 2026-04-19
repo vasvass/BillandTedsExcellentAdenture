@@ -56,6 +56,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setupCamera()
         buildLevel()
         setupPlayer()
+        cam.position = CGPoint(
+            x: player.position.x.clamped(to: (size.width / 2)...(levelWidth - size.width / 2)),
+            y: player.position.y.clamped(to: (size.height / 2)...max(size.height / 2, size.height - size.height / 2))
+        )
         setupHUD()
         setupControls()
     }
@@ -66,8 +70,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         cam = SKCameraNode()
         camera = cam
         addChild(cam)
-        // Initialise camera so the player is centred on screen from the start
-        cam.position = CGPoint(x: size.width / 2, y: size.height / 2)
     }
 
     // MARK: - Level

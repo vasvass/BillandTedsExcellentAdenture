@@ -259,9 +259,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(enemy)
 
         let patrol: CGFloat = 130
+        let patrolDuration: TimeInterval = 1.6
+        let patrolSpeed = patrol / CGFloat(patrolDuration)
         enemy.run(.repeatForever(.sequence([
-            .moveBy(x:  patrol, y: 0, duration: 1.6),
-            .moveBy(x: -patrol, y: 0, duration: 1.6)
+            .run { [weak enemy] in
+                enemy?.physicsBody?.velocity = CGVector(dx: patrolSpeed, dy: enemy?.physicsBody?.velocity.dy ?? 0)
+            },
+            .wait(forDuration: patrolDuration),
+            .run { [weak enemy] in
+                enemy?.physicsBody?.velocity = CGVector(dx: -patrolSpeed, dy: enemy?.physicsBody?.velocity.dy ?? 0)
+            },
+            .wait(forDuration: patrolDuration)
         ])))
     }
 

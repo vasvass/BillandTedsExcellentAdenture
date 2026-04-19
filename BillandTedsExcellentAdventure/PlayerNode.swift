@@ -6,9 +6,9 @@ import SpriteKit
 class PlayerNode: SKSpriteNode {
 
     let characterType: CharacterType
-    private let characterLabel: SKLabelNode
 
     var isOnGround = false
+    private var wasOnGround = false
     var jumpCount   = 0
     let maxJumps    = 2
 
@@ -19,11 +19,9 @@ class PlayerNode: SKSpriteNode {
 
     init(characterType: CharacterType) {
         self.characterType = characterType
-        self.characterLabel = SKLabelNode(text: characterType == .bill ? "B" : "T")
-        let size = CGSize(width: 40, height: 60)
-        super.init(texture: nil, color: characterType.color, size: size)
+        let texture = SpriteFactory.playerTexture(for: characterType)
+        super.init(texture: texture, color: .clear, size: CGSize(width: 40, height: 60))
         setupPhysics()
-        setupLabel()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -33,7 +31,7 @@ class PlayerNode: SKSpriteNode {
     // MARK: - Setup
 
     private func setupPhysics() {
-        physicsBody = SKPhysicsBody(rectangleOf: size)
+        physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 34, height: 58))
         physicsBody?.categoryBitMask    = PhysicsCategory.player
         physicsBody?.contactTestBitMask = PhysicsCategory.ground
                                         | PhysicsCategory.enemy
@@ -47,16 +45,6 @@ class PlayerNode: SKSpriteNode {
         physicsBody?.mass               = 1
     }
 
-    private func setupLabel() {
-        characterLabel.fontName = "AvenirNext-Bold"
-        characterLabel.fontSize = 28
-        characterLabel.fontColor = .white
-        characterLabel.verticalAlignmentMode = .center
-        characterLabel.isUserInteractionEnabled = false
-        characterLabel.xScale = xScale
-        addChild(characterLabel)
-    }
-
     // MARK: - Actions
 
     func jump() {
@@ -67,6 +55,15 @@ class PlayerNode: SKSpriteNode {
         body.applyImpulse(CGVector(dx: 0, dy: characterType.jumpImpulse))
         jumpCount += 1
         isOnGround = false
+
+        // Jump squash/stretch
+        removeAction(forKey: "jumpAnim")
+        let anim = SKAction.sequence([
+            .scaleX(to: 0.80, y: 1.25, duration: 0.08),
+            .scaleX(to: 1.10, y: 0.90, duration: 0.10),
+            .scaleX(to: 1.00, y: 1.00, duration: 0.08)
+        ])
+        run(anim, withKey: "jumpAnim")
     }
 
     func useAbility() {
@@ -77,27 +74,49 @@ class PlayerNode: SKSpriteNode {
     }
 
     private func airGuitarShred() {
-        let wave = SKShapeNode(circleOfRadius: 80)
-        wave.strokeColor = .systemYellow
-        wave.lineWidth   = 3
-        wave.fillColor   = UIColor.systemYellow.withAlphaComponent(0.15)
-        addChild(wave)
-        wave.run(.sequence([
-            .group([.scale(to: 2, duration: 0.4), .fadeOut(withDuration: 0.4)]),
-            .removeFromParent()
+        // Sound-wave rings
+        for i in 0..<3 {
+            let ring = SKShapeNode(circleOfRadius: 50)
+            ring.strokeColor = UIColor(red: 1.0, green: 0.85, blue: 0.10, alpha: 0.9)
+            ring.lineWidth   = 3
+            ring.fillColor   = .clear
+            ring.zPosition   = 5
+            addChild(ring)
+            let delay = SKAction.wait(forDuration: TimeInterval(i) * 0.12)
+            ring.run(.sequence([
+                delay,
+                .group([.scale(to: 3.5, duration: 0.5), .fadeOut(withDuration: 0.5)]),
+                .removeFromParent()
+            ]))
+        }
+        // Shake
+        run(.sequence([
+            .moveBy(x: -4, y: 0, duration: 0.05),
+            .moveBy(x: 8,  y: 0, duration: 0.05),
+            .moveBy(x: -4, y: 0, duration: 0.05)
         ]))
     }
 
     private func bogusDistraction() {
-        let swirl = SKShapeNode(circleOfRadius: 60)
-        swirl.strokeColor = .systemGreen
-        swirl.lineWidth   = 3
-        swirl.fillColor   = UIColor.systemGreen.withAlphaComponent(0.15)
-        addChild(swirl)
-        swirl.run(.sequence([
-            .group([.rotate(byAngle: .pi * 4, duration: 0.6), .fadeOut(withDuration: 0.6)]),
-            .removeFromParent()
-        ]))
+        // Green spiral rings
+        for i in 0..<3 {
+            let swirl = SKShapeNode(circleOfRadius: 40)
+            swirl.strokeColor = UIColor(red: 0.10, green: 0.90, blue: 0.30, alpha: 0.9)
+            swirl.lineWidth   = 3
+            swirl.fillColor   = .clear
+            swirl.zPosition   = 5
+            addChild(swirl)
+            let delay = SKAction.wait(forDuration: TimeInterval(i) * 0.10)
+            swirl.run(.sequence([
+                delay,
+                .group([
+                    .rotate(byAngle: .pi * 3, duration: 0.55),
+                    .scale(to: 3.0, duration: 0.55),
+                    .fadeOut(withDuration: 0.55)
+                ]),
+                .removeFromParent()
+            ]))
+        }
     }
 
     // MARK: - Update
@@ -108,13 +127,23 @@ class PlayerNode: SKSpriteNode {
         if isMovingLeft {
             body.velocity.dx = -characterType.moveSpeed
             xScale = -1
-            characterLabel.xScale = -1
         } else if isMovingRight {
             body.velocity.dx = characterType.moveSpeed
             xScale = 1
-            characterLabel.xScale = 1
         } else {
             body.velocity.dx = 0
         }
+
+        // Landing squash (only on air -> ground transition)
+        if isOnGround && !wasOnGround && jumpCount == 0, action(forKey: "landAnim") == nil {
+            let sign: CGFloat = xScale < 0 ? -1 : 1
+            let squash = SKAction.sequence([
+                .scaleX(to: 1.15 * sign, y: 0.85, duration: 0.06),
+                .scaleX(to: 1.00 * sign, y: 1.00, duration: 0.06)
+            ])
+            run(squash, withKey: "landAnim")
+        }
+
+        wasOnGround = isOnGround
     }
 }

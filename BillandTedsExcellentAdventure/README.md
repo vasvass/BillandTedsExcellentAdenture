@@ -112,6 +112,8 @@ BillandTedsExcellentAdventure/
 
 ## Roadmap
 
+> Note: This checklist is aspirational and represents planned milestones, not a verified feature-completion audit for the current PR or repository state.
+
 - [x] Project scaffolding (SpriteKit + GameplayKit)
 - [ ] Main menu & character selection screen
 - [ ] Core platformer mechanics (move, jump, double-jump)

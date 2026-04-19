@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Bill & Ted's Excellent Adventure — iOS Platformer
 
 A 2D side-scrolling platformer for iOS, inspired by the 1989 film *Bill & Ted's Excellent Adventure*. Play as Bill S. Preston, Esq. or Ted "Theodore" Logan as they travel through time in a phone booth, encounter historical figures, and learn about history along the way.
@@ -142,6 +141,3 @@ BillandTedsExcellentAdventure/
 
 *Be excellent to each other — and to your code.*
 =======
-# BillandTedsExcellentAdventure
-An ios platform game
->>>>>>> 8f60d7d9e9e3894d0bcbb0fc5870ba2a5d8fd1b4

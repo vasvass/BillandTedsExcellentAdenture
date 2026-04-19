@@ -451,6 +451,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ]))
     }
 
+    private var supportingGroundBodies = Set<ObjectIdentifier>()
+
     private func resetMovement() {
         leftTouchID  = nil
         rightTouchID = nil
@@ -460,11 +462,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     // MARK: - Physics contacts
 
+    private func playerGroundBodies(for contact: SKPhysicsContact) -> (player: SKPhysicsBody, ground: SKPhysicsBody)? {
+        if contact.bodyA.categoryBitMask == PhysicsCategory.player &&
+           contact.bodyB.categoryBitMask == PhysicsCategory.ground {
+            return (contact.bodyA, contact.bodyB)
+        }
+
+        if contact.bodyA.categoryBitMask == PhysicsCategory.ground &&
+           contact.bodyB.categoryBitMask == PhysicsCategory.player {
+            return (contact.bodyB, contact.bodyA)
+        }
+
+        return nil
+    }
+
+    private func isSupportingGroundContact(_ contact: SKPhysicsContact) -> Bool {
+        guard let groundBodies = playerGroundBodies(for: contact) else { return false }
+
+        if groundBodies.player == contact.bodyA {
+            return contact.contactNormal.dy < -0.5
+        } else {
+            return contact.contactNormal.dy > 0.5
+        }
+    }
+
     func didBegin(_ contact: SKPhysicsContact) {
         let masks = (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask)
 
-        if masks == (PhysicsCategory.player, PhysicsCategory.ground) ||
-           masks == (PhysicsCategory.ground,  PhysicsCategory.player) {
+        if let groundBodies = playerGroundBodies(for: contact),
+           isSupportingGroundContact(contact) {
+            supportingGroundBodies.insert(ObjectIdentifier(groundBodies.ground))
             player.isOnGround = true
             player.jumpCount  = 0
         }
@@ -486,9 +513,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didEnd(_ contact: SKPhysicsContact) {
         let masks = (contact.bodyA.categoryBitMask, contact.bodyB.categoryBitMask)
 
-        if masks == (PhysicsCategory.player, PhysicsCategory.ground) ||
-           masks == (PhysicsCategory.ground,  PhysicsCategory.player) {
-            player.isOnGround = false
+        if let groundBodies = playerGroundBodies(for: contact) {
+            supportingGroundBodies.remove(ObjectIdentifier(groundBodies.ground))
+            player.isOnGround = !supportingGroundBodies.isEmpty
         }
 
         if masks == (PhysicsCategory.player, PhysicsCategory.phoneBooth) ||
